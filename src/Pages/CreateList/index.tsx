@@ -1,75 +1,85 @@
-import React from "react";
-import Logo from '../../assets/logo.png'
+import React, { ChangeEvent, useState } from "react";
+import NavBar from "../../Components/NavBar";
+import Card from "../../Components/Card";
+import Button from "../../Components/Button";
+import Input from "../../Components/Input";
+import Item from "../../Components/Item";
+//Import de tipos
+import { ItemList } from '../../types/types'
+import ShowList from "../../Components/ShowList";
+import { useForm } from 'react-hook-form';
+import { v4 } from 'uuid'
 
 export default function CreateList() {
+
+    const { register, setValue, handleSubmit } = useForm()
+    const [listItems, setListItems] = useState<Array<ItemList>>([{ nome: 'dwaef', preco: 11, frete: 12 }])
+    const arrAux: Array<ItemList> = []
+
+    const add = (i: any) => {
+        console.log('form ', i)
+        arrAux.push(...arrAux, i)
+        console.log(arrAux)
+        setListItems([...arrAux])
+    }
+
+    const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target.value)
+        setValue(event.target.name, event.target.value)
+    }
 
     return (
 
         <>
-            <div className="bg-indigo-500">
-                <div className="flex justify-between bg-indigo-500 p-2 w-3/4 mx-auto">
-                    <img
-                        className="h-10 w-10"
-                        src={Logo} alt="Logo"
-                    />
-                    <img
-                        className="h-10 w-10"
-                        src={Logo} alt="Profile-image"
-                    />
-                </div>
-            </div>
-            <div className="flex-wrap flex flex-row justify-center items-start mt-5">
+            <NavBar />
 
-                <div className="justify-center items-center bg-[#222042] max-w-xs rounded-md p-5 outline outline-1 outline-[#4643DE]">
-                    <h1
-                        className="text-xl text-white font-bold mb-3"
-                    >Novo item</h1>
+            <div className="h-screen bg-[#25243C] flex-wrap flex flex-row justify-center items-start">
+                <Card>
 
-                    <form action="">
-                        <input
-                            className="bg-indigo-900 w-full rounded-sm p-1 my-1 outline outline-[#4643DE] outline-1 hover:outline-2 text-[#4643DE]"
-                            placeholder="Titulo"
-                            name="titulo"
-                            type="text"
+                    <h1 className="text-2xl text-white font-bold mb-3">
+                        Novo item
+                    </h1>
+
+                    <form onSubmit={handleSubmit(add)}>
+                        <Input
+                            {...register("nome")}
+                            type='text'
+                            label="Nome"
+                            onChange={inputChangeHandler}
                         />
-                        <div className="flex" >
-                            <input
-                                className="bg-indigo-900 w-full rounded-sm p-1 my-1 outline outline-[#4643DE] outline-1 hover:outline-2 text-[#4643DE]"
-                                placeholder="Preço"
-                                name="preco"
-                                type="number"
-                            />
-                            <input
-                                className="bg-indigo-900 w-full rounded-sm p-1 my-1 outline outline-[#4643DE] outline-1 hover:outline-2 text-[#4643DE]"
-                                placeholder="Frete"
-                                name="frete"
-                                type="number"
-                            />
+                        <Input
+                            {...register("preco")}
+                            type='number'
+                            label="Preço"
+                            onChange={inputChangeHandler}
 
-                        </div>
+                        />
+                        <Input
+                            {...register("frete")}
+                            type='number'
+                            label="Frete"
+                            onChange={inputChangeHandler}
+                        />
 
-                        <button
-                            className="bg-indigo-500 w-full my-2 py-2 rounded-sm text-white font-bold"
-                        >
-                            Adicionar
-                        </button>
+                        <Button type='submit'> Adicionar</Button>
 
                     </form>
-                </div>
+                </Card>
 
-                <div className="justify-center items-center bg-[#222042] rounded-md p-5 outline outline-1 outline-[#4643DE]">
-                    <h1 className="text-white">Titulo da lista</h1>
-                    <div className="w-full bg-[#262EFF] p-2 rounded-md flex justify-between items-center">
-                        <p className="text-white text-xs">
-                            Mouse Logitech
-                        </p>
-                        <ul className="text-xs">
-                            <li>Preço R$ 100,00</li>
-                            <li>Frete R$ 100,00</li>
-                        </ul>
-                    </div>
-                </div>
+                <Card>
+                    <h1 className="text-2xl text-white font-bold mb-3">Titulo da lista</h1>
+
+                    {listItems.map((item) => (
+                        <Item
+                            nome={item.nome}
+                            preco={item.preco}
+                            frete={item.frete}
+                        />
+                    ))}
+                </Card>
+
             </div>
+
         </>
 
     );
